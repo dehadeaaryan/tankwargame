@@ -80,40 +80,66 @@ The **Tank War Game** is a 2D action game inspired by the classic *Battle City*.
 
 ---
 
-## **Project Structure**
+## Project Structure
 
-src/<br />
-├── main/<br />
-│   ├── java/<br />
-│   │   ├── me.aaryandehade/<br />
-│   │   │   ├── App.java          # Main entry point of the application<br />
-│   │   │   ├── entities/         # Core game objects<br />
-│   │   │   │   ├── Tank.java<br />
-│   │   │   │   ├── Missile.java<br />
-│   │   │   │   ├── Wall.java<br />
-│   │   │   │   ├── MedPack.java<br />
-│   │   │   │   ├── Explosion.java<br />
-│   │   │   │   ├── Direction.java<br />
-│   │   │   ├── utils/            # Utility classes<br />
-│   │   │   │   ├── Constants.java<br />
-│   │   │   │   ├── Resources.java<br />
-│   │   │   ├── factories/        # Factory classes<br />
-│   │   │   │   ├── TankFactory.java<br />
-│   │   │   │   ├── MissileFactory.java<br />
-│   │   │   │   ├── WallFactory.java<br />
-│   │   │   ├── ai/               # AI for enemy tanks<br />
-│   │   │   │   ├── EnemyAI.java<br />
-│   ├── resources/<br />
-│   │   ├── assets/               # Game assets (images, sounds)<br />
-│   │   │   ├── tank.png<br />
-│   │   │   ├── enemy_tank.png<br />
-│   │   │   ├── missile.png<br />
-│   │   │   ├── explosion.png<br />
-│   │   │   ├── medpack.png<br />
-│   │   ├── application.css       # Stylesheet for GUI<br />
-│   │   ├── game_layout.fxml      # Optional FXML for advanced layouts<br />
-└── test/                         # Test directory<br />
+The project is organized into the following structure:
 
+- `src/`
+   - `main/`
+      - `java/`
+         - `edu/tcu/cs/tankwargame/`
+            - `App.java`
+               - Main entry point of the application that launches the game.
+            - `entities/`
+               - Contains core game objects:
+                  - `Tank.java`
+                     - Represents both player and enemy tanks.
+                  - `Missile.java`
+                     - Represents a missile fired by the tanks.
+                  - `Wall.java`
+                     - Represents indestructible walls in the game.
+                  - `MedPack.java`
+                     - Represents health packs that restore tank health.
+                  - `Explosion.java`
+                     - Represents the explosion effect when a tank is destroyed.
+                  - `Direction.java`
+                     - Enum or class for tank movement directions (up, down, left, right).
+            - `utils/`
+               - Contains utility classes:
+                  - `Constants.java`
+                     - Holds constant values used throughout the game.
+                  - `Resources.java`
+                     - Handles loading resources such as images and sounds.
+            - `factories/`
+               - Contains factory classes for creating game objects:
+                  - `TankFactory.java`
+                     - Creates different types of tanks (player-controlled, enemy).
+                  - `MissileFactory.java`
+                     - Creates missiles for the player and enemy tanks.
+                  - `WallFactory.java`
+                     - Creates walls for the game map.
+            - `ai/`
+               - Contains AI logic for enemy tank behavior:
+                  - `EnemyAI.java`
+                     - Implements basic AI for enemy tanks (e.g., random movement, firing at the player).
+      - `resources/`
+         - `edu/tcu/cs/tankwargame/`
+            - `assets/`
+               - Contains game assets like images and sounds:
+                  - `tank.png`
+                     - Image of the player tank.
+                  - `enemy_tank.png`
+                     - Image of the enemy tank.
+                  - `missile.png`
+                     - Image of a missile.
+                  - `explosion.png`
+                     - Image for the explosion effect.
+                  - `medpack.png`
+                     - Image for health pack.
+            - `application.css`
+               - Stylesheet for customizing the appearance of the game (optional).
+            - `game_layout.fxml`
+               - Optional FXML file for more advanced game layout (used for JavaFX GUI).
 
 ---
 
