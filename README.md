@@ -82,37 +82,37 @@ The **Tank War Game** is a 2D action game inspired by the classic *Battle City*.
 
 ## **Project Structure**
 
-src/
-├── main/
-│   ├── java/
-│   │   ├── me.aaryandehade/
-│   │   │   ├── App.java          # Main entry point of the application
-│   │   │   ├── entities/         # Core game objects
-│   │   │   │   ├── Tank.java
-│   │   │   │   ├── Missile.java
-│   │   │   │   ├── Wall.java
-│   │   │   │   ├── MedPack.java
-│   │   │   │   ├── Explosion.java
-│   │   │   │   ├── Direction.java
-│   │   │   ├── utils/            # Utility classes
-│   │   │   │   ├── Constants.java
-│   │   │   │   ├── Resources.java
-│   │   │   ├── factories/        # Factory classes
-│   │   │   │   ├── TankFactory.java
-│   │   │   │   ├── MissileFactory.java
-│   │   │   │   ├── WallFactory.java
-│   │   │   ├── ai/               # AI for enemy tanks
-│   │   │   │   ├── EnemyAI.java
-│   ├── resources/
-│   │   ├── assets/               # Game assets (images, sounds)
-│   │   │   ├── tank.png
-│   │   │   ├── enemy_tank.png
-│   │   │   ├── missile.png
-│   │   │   ├── explosion.png
-│   │   │   ├── medpack.png
-│   │   ├── application.css       # Stylesheet for GUI
-│   │   ├── game_layout.fxml      # Optional FXML for advanced layouts
-└── test/                         # Test directory
+src/<br />
+├── main/<br />
+│   ├── java/<br />
+│   │   ├── me.aaryandehade/<br />
+│   │   │   ├── App.java          # Main entry point of the application<br />
+│   │   │   ├── entities/         # Core game objects<br />
+│   │   │   │   ├── Tank.java<br />
+│   │   │   │   ├── Missile.java<br />
+│   │   │   │   ├── Wall.java<br />
+│   │   │   │   ├── MedPack.java<br />
+│   │   │   │   ├── Explosion.java<br />
+│   │   │   │   ├── Direction.java<br />
+│   │   │   ├── utils/            # Utility classes<br />
+│   │   │   │   ├── Constants.java<br />
+│   │   │   │   ├── Resources.java<br />
+│   │   │   ├── factories/        # Factory classes<br />
+│   │   │   │   ├── TankFactory.java<br />
+│   │   │   │   ├── MissileFactory.java<br />
+│   │   │   │   ├── WallFactory.java<br />
+│   │   │   ├── ai/               # AI for enemy tanks<br />
+│   │   │   │   ├── EnemyAI.java<br />
+│   ├── resources/<br />
+│   │   ├── assets/               # Game assets (images, sounds)<br />
+│   │   │   ├── tank.png<br />
+│   │   │   ├── enemy_tank.png<br />
+│   │   │   ├── missile.png<br />
+│   │   │   ├── explosion.png<br />
+│   │   │   ├── medpack.png<br />
+│   │   ├── application.css       # Stylesheet for GUI<br />
+│   │   ├── game_layout.fxml      # Optional FXML for advanced layouts<br />
+└── test/                         # Test directory<br />
 
 
 ---
