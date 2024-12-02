@@ -92,8 +92,10 @@ The project is organized into the following structure:
                - Main entry point of the application that launches the game.
             - `entities/`
                - Contains core game objects:
-                  - `Tank.java`
-                     - Represents both player and enemy tanks.
+                  - `PlayerTank.java`
+                     - Represents the player-controlled tank.
+                  - `EnemyTank.java`
+                     - Represents the enemy-controlled tanks.
                   - `Missile.java`
                      - Represents a missile fired by the tanks.
                   - `Wall.java`
@@ -126,7 +128,7 @@ The project is organized into the following structure:
          - `edu/tcu/cs/tankwargame/`
             - `assets/`
                - Contains game assets like images and sounds:
-                  - `tank.png`
+                  - `player_tank.png`
                      - Image of the player tank.
                   - `enemy_tank.png`
                      - Image of the enemy tank.
@@ -136,6 +138,8 @@ The project is organized into the following structure:
                      - Image for the explosion effect.
                   - `medpack.png`
                      - Image for health pack.
+                  - `wall.png`
+                     - Image for a single block of wall.
             - `application.css`
                - Stylesheet for customizing the appearance of the game (optional).
             - `game_layout.fxml`
