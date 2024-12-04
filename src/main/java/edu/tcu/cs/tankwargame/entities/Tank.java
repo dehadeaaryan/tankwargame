@@ -8,22 +8,19 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.input.KeyCode;  // Import KeyCode for key input
 
 public abstract class Tank extends StackPane {
     private Point2D position;
     private int health;
     protected double speed;
     private Image image;
-    private Direction direction;
     private Rectangle healthBar;
 
-    public Tank(Point2D position, Direction direction, int health, double speed, String imagePath) {
+    public Tank(Point2D position, int health, double speed, String imagePath) {
         this.position = position;
         this.health = health;
         this.speed = speed;
         this.image = Resources.loadImage(imagePath);
-        this.direction = direction;
         this.healthBar = new Rectangle(50, 5, Color.GREEN);
 
         // Set the position of the health bar above the tank
@@ -37,74 +34,39 @@ public abstract class Tank extends StackPane {
     }
 
     public abstract void updateMovement();
-    public abstract void moveUp();
-    public abstract void moveDown();
-    public abstract void moveLeft();
-    public abstract void moveRight();
 
-    // Update health bar to reflect current health
     public void updateHealthBar() {
         double healthPercentage = (double) health / Constants.MAX_HEALTH;
         healthBar.setWidth(50 * healthPercentage);
-        if (healthPercentage <= 0.2) {
-            healthBar.setFill(Color.RED);
-        }
+        healthBar.setFill(healthPercentage <= 0.2 ? Color.RED : Color.GREEN);
     }
 
-    // When tank takes damage, update health and health bar
     public void takeDamage(int damage) {
         this.health -= damage;
         updateHealthBar();
     }
 
-    // Fire missile (placeholder for missile firing)
     public void fireMissile() {
-        // Placeholder for firing a missile
+        System.out.println("Firing missile in direction of rotation: " + getRotate());
+        // Missile firing logic should be implemented here
     }
 
-    // Move the tank using a KeyCode input
-    public void move(KeyCode key) {
-        System.out.println("moving");
-        switch (key) {
-            case UP:
-                moveUp();
-                break;
-            case DOWN:
-                moveDown();
-                break;
-            case LEFT:
-                moveLeft();
-                break;
-            case RIGHT:
-                moveRight();
-                break;
-            default:
-                break;  // No movement for other keys
-        }
-    }
-
-    // Ensure the tank stays within the game bounds
     public void ensureWithinBounds() {
-        double x = getPosition().getX();
-        double y = getPosition().getY();
+        double x = getTranslateX();
+        double y = getTranslateY();
 
-        // Ensure the tank doesn't go out of bounds
-        if (x < 0) {
-            setPosition(new Point2D(0, y));
-        } else if (x > Constants.GAME_WIDTH - 64) {
-            setPosition(new Point2D(Constants.GAME_WIDTH - 64, y));
-        }
-
-        if (y < 0) {
-            setPosition(new Point2D(x, 0));
-        } else if (y > Constants.GAME_HEIGHT - 64) {
-            setPosition(new Point2D(x, Constants.GAME_HEIGHT - 64));
-        }
+        if (x < 0) setTranslateX(0);
+        if (x > Constants.GAME_WIDTH - 64) setTranslateX(Constants.GAME_WIDTH - 64);
+        if (y < 0) setTranslateY(0);
+        if (y > Constants.GAME_HEIGHT - 64) setTranslateY(Constants.GAME_HEIGHT - 64);
     }
 
-    // Getters and setters for position, health, and direction
     public Point2D getPosition() {
-        return position;
+        return new Point2D(getTranslateX(), getTranslateY());
+    }
+
+    public double getSpeed() {
+        return this.speed;
     }
 
     public void setPosition(Point2D position) {
@@ -120,13 +82,5 @@ public abstract class Tank extends StackPane {
     public void setHealth(int health) {
         this.health = health;
         updateHealthBar();
-    }
-
-    public Direction getDirection() {
-        return direction;
-    }
-
-    public void setDirection(Direction direction) {
-        this.direction = direction;
     }
 }

@@ -7,11 +7,13 @@ public class Constants {
 
     // Tank settings
     public static final int PLAYER_TANK_SPEED = 3;
+    public static final double PLAYER_TANK_ROTATION_SPEED = 5.0;
+    public static final double ENEMY_TANK_ROTATION_SPEED = 1;
     public static final int ENEMY_TANK_SPEED = 1;
     public static final int MISSILE_SPEED = 5;
 
     // Health points
-    public static final int MAX_HEALTH = 100;
+    public static final int MAX_HEALTH = 500;
     public static final int DAMAGE_PER_MISSILE = 25;
 
     // Game settings

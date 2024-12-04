@@ -1,0 +1,198 @@
+classDiagram
+    class GameUI {
+        +PlayerTank playerTank
+        +List<Tank> tanks
+        +List<Missile> missiles
+        +List<MedPack> medPacks
+        +Map<EnemyTank, EnemyAI> enemyAIMap
+        +AnimationTimer gameLoop
+        +Timeline medPackSpawnTimer
+        +boolean running
+        +boolean gameWon
+        +Stage primaryStage
+        +initializeEnemies()
+        +addRandomWallRowsAndColumns()
+        +setupUI()
+        +setupGameLoop()
+        +startMedPackSpawning()
+        +spawnMedPack()
+        +isValidMedPackPosition(double x, double y)
+        +replaceWithExplosion(Tank tank)
+        +updateEnemies()
+        +handleKeyPress(KeyCode code)
+        +handleKeyRelease(KeyCode code)
+        +update()
+        +showGameOverScreen()
+        +isValidMove(Tank tank, double newX, double newY)
+        +createMissile(Point2D position, double angle, String owner)
+        +updateMissiles()
+        +handleMissileCollisions(Iterator<Missile> missileIterator, Missile missile)
+        +checkMedPackCollisions()
+        +isOutOfBounds(Missile missile)
+        +showWinnerScreen()
+    }
+
+    class PlayerTank {
+        +Point2D position
+        +int health
+        +double speed
+        +String image
+        +updateMovement()
+        +fireMissile()
+        +move(KeyCode code)
+        +stop(KeyCode code)
+        +takeDamage(int damage)
+        +ensureWithinBounds()
+        +getBoundsInParent()
+        +getTranslateX()
+        +getTranslateY()
+        +getRotate()
+        +setTranslateX(double x)
+        +setTranslateY(double y)
+        +setRotate(double angle)
+        +getPosition()
+    }
+
+    class EnemyTank {
+        +EnemyAI enemyAI
+        +initializeAI(PlayerTank playerTank)
+        +updateMovement()
+        +moveForward()
+        +rotateRandomly()
+        +fireMissile()
+        +getPosition()
+        +getTranslateX()
+        +getTranslateY()
+        +setTranslateX(double x)
+        +setTranslateY(double y)
+        +setRotate(double angle)
+        +getRotate()
+    }
+
+    class EnemyAI {
+        +EnemyTank enemyTank
+        +PlayerTank playerTank
+        +Random random
+        +long lastAttackTime
+        +move()
+        +rotateTowardsPlayer(double angleToPlayer)
+        +attack()
+        +calculateAngleToPlayer(Point2D enemyPos, Point2D playerPos)
+        +normalizeAngle(double angle)
+    }
+
+    class Tank {
+        +Point2D position
+        +int health
+        +double speed
+        +String image
+        +updateMovement()
+        +takeDamage(int damage)
+        +ensureWithinBounds()
+        +getBoundsInParent()
+        +getTranslateX()
+        +getTranslateY()
+        +getRotate()
+        +setTranslateX(double x)
+        +setTranslateY(double y)
+        +setRotate(double angle)
+        +getPosition()
+    }
+
+    class Missile {
+        +Point2D position
+        +double angle
+        +String owner
+        +int damage
+        +boolean isPlayerOwner()
+        +move()
+        +getBoundsInParent()
+        +takeDamage(int damage)
+    }
+
+    class MedPack {
+        +Point2D position
+        +int healAmount
+        +getBoundsInParent()
+        +takeDamage(int damage)
+    }
+
+    class Wall {
+        +Point2D position
+        +double width
+        +double height
+        +getBoundsInParent()
+    }
+
+    class Explosion {
+        +Point2D position
+        +int damage
+        +getBoundsInParent()
+    }
+
+    class GameOverScreen {
+        +show()
+        +setOnMouseClicked(event)
+    }
+
+    class WinnerScreen {
+        +show()
+        +setOnMouseClicked(event)
+    }
+
+    class TitleScreen {
+        +show()
+    }
+
+    class TankFactory {
+        +createTank(String type, Point2D position)
+    }
+
+    class MissileFactory {
+        +createMissile(Point2D position, double angle, String owner)
+    }
+
+    class MedPackFactory {
+        +createMedPack(Point2D position)
+    }
+
+    class WallFactory {
+        +createRowOfWalls(double x, double y)
+        +createColumnOfWalls(double x, double y)
+    }
+
+    class ExplosionFactory {
+        +createExplosion(Point2D position)
+    }
+
+    GameUI --|> PlayerTank
+    GameUI --|> EnemyTank
+    GameUI --|> Missile
+    GameUI --|> MedPack
+    GameUI --|> Wall
+    GameUI --|> Explosion
+    GameUI --|> EnemyAI
+
+    PlayerTank "1" -- "*" Tank
+    TankFactory --|> Tank
+    MissileFactory --|> Missile
+    MedPackFactory --|> MedPack
+    WallFactory --|> Wall
+    ExplosionFactory --|> Explosion
+
+    EnemyTank --> EnemyAI
+    EnemyAI --|> PlayerTank
+    Missile --> Tank
+
+    GameUI "1" o-- "1..*" EnemyTank : "manages"
+    GameUI "1" o-- "1..*" Missile : "spawns"
+    GameUI "1" o-- "1..*" MedPack : "spawns"
+    GameUI "1" o-- "1..*" Wall : "manages"
+    GameUI "1" o-- "1..*" Explosion : "manages"
+    GameUI "1" o-- "1..*" Tank : "manages"
+
+    Tank "1" --> "1" Explosion : "is destroyed by"
+    Tank "1" --> "1..*" Missile : "shoots"
+
+    EnemyAI --|> GameUI
+    EnemyTank o-- "1" Tank : "inherits from"

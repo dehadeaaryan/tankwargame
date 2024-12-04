@@ -1,72 +1,96 @@
 package edu.tcu.cs.tankwargame.entities;
 
+import edu.tcu.cs.tankwargame.factories.MissileFactory;
+import edu.tcu.cs.tankwargame.ui.GameUI;
 import edu.tcu.cs.tankwargame.utils.Constants;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 
 public class PlayerTank extends Tank {
-    private boolean movingUp = false;
-    private boolean movingDown = false;
-    private boolean movingLeft = false;
-    private boolean movingRight = false;
+    private boolean movingForward = false;
+    private boolean movingBackward = false;
+    private boolean rotatingLeft = false;
+    private boolean rotatingRight = false;
+    private Circle debugDot;
 
     public PlayerTank(Point2D position) {
-        super(position, Direction.UP, Constants.MAX_HEALTH, Constants.PLAYER_TANK_SPEED, Constants.PLAYER_TANK_IMAGE);
+        super(position, Constants.MAX_HEALTH, Constants.PLAYER_TANK_SPEED, Constants.PLAYER_TANK_IMAGE);
+
+        // Initially, the tank's top edge should be facing up (0 degrees)
+        setRotate(0);  // Ensure the tank's initial rotation is 0 (facing up)
+
+        debugDot = new Circle(100, Color.RED); // Radius = 5, Color = red
+        debugDot.setVisible(true); // Set the dot to visible
     }
 
-    @Override
     public void move(KeyCode code) {
-        // Set movement direction flags based on the key pressed
         switch (code) {
-            case W -> movingUp = true;
-            case S -> movingDown = true;
-            case A -> movingLeft = true;
-            case D -> movingRight = true;
+            case W -> movingForward = true;
+            case S -> movingBackward = true;
+            case A -> rotatingLeft = true;
+            case D -> rotatingRight = true;
         }
     }
 
     public void stop(KeyCode code) {
-        // Set movement direction flags to false when the key is released
         switch (code) {
-            case W -> movingUp = false;
-            case S -> movingDown = false;
-            case A -> movingLeft = false;
-            case D -> movingRight = false;
+            case W -> movingForward = false;
+            case S -> movingBackward = false;
+            case A -> rotatingLeft = false;
+            case D -> rotatingRight = false;
         }
     }
 
-    // Update the tank's position based on the current direction flags
     @Override
     public void updateMovement() {
-        if (movingUp) moveUp();
-        if (movingDown) moveDown();
-        if (movingLeft) moveLeft();
-        if (movingRight) moveRight();
+        // Rotation logic
+        if (rotatingLeft) setRotate(getRotate() - Constants.PLAYER_TANK_ROTATION_SPEED);
+        if (rotatingRight) setRotate(getRotate() + Constants.PLAYER_TANK_ROTATION_SPEED);
+
+        // Movement logic
+        if (movingForward) moveForward();
+        if (movingBackward) moveBackward();
     }
 
-    @Override
-    public void moveUp() {
-        setPosition(getPosition().add(0, -speed)); // Move up by speed
+    private void moveForward() {
+        // Move forward based on the current rotation of the tank
+        double angleRadians = Math.toRadians(getRotate() - 90);  // Convert angle to radians
+        double deltaX = Math.cos(angleRadians) * getSpeed();  // X movement based on angle
+        double deltaY = Math.sin(angleRadians) * getSpeed();  // Y movement based on angle
+
+        // Apply the movement to the tank's position
+        setTranslateX(getTranslateX() + deltaX);
+        setTranslateY(getTranslateY() + deltaY);
     }
 
-    @Override
-    public void moveDown() {
-        setPosition(getPosition().add(0, speed)); // Move down by speed
-    }
+    private void moveBackward() {
+        // Move backward based on the current rotation of the tank (opposite direction of forward)
+        double angleRadians = Math.toRadians(getRotate() - 90);  // Convert angle to radians
+        double deltaX = Math.cos(angleRadians) * getSpeed();  // X movement based on angle
+        double deltaY = Math.sin(angleRadians) * getSpeed();  // Y movement based on angle
 
-    @Override
-    public void moveLeft() {
-        setPosition(getPosition().add(-speed, 0)); // Move left by speed
-    }
-
-    @Override
-    public void moveRight() {
-        setPosition(getPosition().add(speed, 0)); // Move right by speed
+        // Apply the movement to the tank's position (opposite direction)
+        setTranslateX(getTranslateX() - deltaX);
+        setTranslateY(getTranslateY() - deltaY);
     }
 
     @Override
     public void fireMissile() {
-        // Implement missile firing for player
-        System.out.println("Player firing missile!");
+        // Get the current rotation angle in degrees
+        double angleDegrees = getRotate() - 90;
+        double angleRadians = Math.toRadians(angleDegrees);
+
+        double missileX = getPosition().getX() + 48 * Math.cos(angleRadians);
+        double missileY = getPosition().getY() + 48 * Math.sin(angleRadians);
+
+        // Create the missile at the calculated position
+        Point2D missilePosition = new Point2D(missileX, missileY);
+
+        // Get the parent GameUI and create the missile
+        GameUI gameUI = (GameUI) getParent(); // Assuming GameUI is the parent of PlayerTank
+        gameUI.createMissile(missilePosition, angleDegrees, "Player"); // Pass the rotation angle for missile direction
     }
 }
