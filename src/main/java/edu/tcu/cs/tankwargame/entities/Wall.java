@@ -11,14 +11,13 @@ public class Wall extends ImageView {
     public static final int WALL_HEIGHT = 32;
 
     private Point2D position;
-    private Image image;
 
     public Wall(Point2D position) {
         this.position = position;
-        this.image = Resources.getWallImage(); // Load the wall image
-        ImageView imageView = new ImageView(image);
-        imageView.setFitWidth(WALL_WIDTH); // Set the width of the image
-        imageView.setFitHeight(WALL_HEIGHT); // Set the height of the image
+
+        setImage(Resources.getWallImage());
+        setFitWidth(32);
+        setFitHeight(32);
 
         setTranslateX(position.getX());
         setTranslateY(position.getY());

@@ -1,11 +1,9 @@
 package edu.tcu.cs.tankwargame.entities;
 
-import edu.tcu.cs.tankwargame.factories.MissileFactory;
 import edu.tcu.cs.tankwargame.ui.GameUI;
 import edu.tcu.cs.tankwargame.utils.Constants;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
@@ -14,16 +12,10 @@ public class PlayerTank extends Tank {
     private boolean movingBackward = false;
     private boolean rotatingLeft = false;
     private boolean rotatingRight = false;
-    private Circle debugDot;
+    private long lastMissileFire = 0;
 
     public PlayerTank(Point2D position) {
         super(position, Constants.MAX_HEALTH, Constants.PLAYER_TANK_SPEED, Constants.PLAYER_TANK_IMAGE);
-
-        // Initially, the tank's top edge should be facing up (0 degrees)
-        setRotate(0);  // Ensure the tank's initial rotation is 0 (facing up)
-
-        debugDot = new Circle(100, Color.RED); // Radius = 5, Color = red
-        debugDot.setVisible(true); // Set the dot to visible
     }
 
     public void move(KeyCode code) {
@@ -79,6 +71,8 @@ public class PlayerTank extends Tank {
 
     @Override
     public void fireMissile() {
+        if (getParent() == null) return;
+        if (System.currentTimeMillis() - lastMissileFire < Constants.MISSILE_COOLDOWN) return;
         // Get the current rotation angle in degrees
         double angleDegrees = getRotate() - 90;
         double angleRadians = Math.toRadians(angleDegrees);
@@ -92,5 +86,6 @@ public class PlayerTank extends Tank {
         // Get the parent GameUI and create the missile
         GameUI gameUI = (GameUI) getParent(); // Assuming GameUI is the parent of PlayerTank
         gameUI.createMissile(missilePosition, angleDegrees, "Player"); // Pass the rotation angle for missile direction
+        lastMissileFire = System.currentTimeMillis();
     }
 }

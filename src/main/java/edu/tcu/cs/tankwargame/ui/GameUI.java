@@ -39,6 +39,7 @@ public class GameUI extends Pane {
     }
 
     private void setupUI() {
+        Random random = new Random();
         setStyle("-fx-background-color: #000;");
         running = true;
 
@@ -48,9 +49,17 @@ public class GameUI extends Pane {
         playerTank = (PlayerTank) TankFactory.createTank("Player", new Point2D(playerX, playerY));
         tanks.add(playerTank);
         getChildren().add(playerTank);
-        // Add random horizontal and vertical wall rows
-//        addRandomWallRowsAndColumns();
-//        double
+
+        Wall[] walls1 = WallFactory.createRowOfWalls(Constants.GAME_WIDTH / 2 - 80, 200);
+        getChildren().addAll(walls1);
+        Wall[] walls2 = WallFactory.createRowOfWalls(Constants.GAME_WIDTH / 2 - 80, Constants.GAME_HEIGHT - 200);
+        getChildren().addAll(walls2);
+
+        Wall[] walls3 = WallFactory.createColumnOfWalls( 200, Constants.GAME_HEIGHT / 2 - 80);
+        getChildren().addAll(walls3);
+        Wall[] walls4 = WallFactory.createColumnOfWalls( Constants.GAME_WIDTH - 200, Constants.GAME_HEIGHT / 2 - 80);
+        getChildren().addAll(walls4);
+
 
         initializeEnemies();
 
@@ -69,7 +78,8 @@ public class GameUI extends Pane {
             double x = random.nextDouble() * (Constants.GAME_WIDTH - Wall.WALL_WIDTH * 5);  // Random starting x for the row
             double y = random.nextDouble() * (Constants.GAME_HEIGHT - Wall.WALL_HEIGHT); // Random starting y for the row
 
-            WallFactory.createRowOfWalls(x, y);  // 5 walls in this row
+            Wall[] walls = WallFactory.createRowOfWalls(x, y);
+            getChildren().addAll(walls); // 5 walls in this row
         }
 
         // Add 3 vertical wall columns at random positions
@@ -265,9 +275,11 @@ public class GameUI extends Pane {
                 continue;
             }
 
+            // Handle missile collisions with tanks and walls
             handleMissileCollisions(missileIterator, missile);
         }
     }
+
 
     private void handleMissileCollisions(Iterator<Missile> missileIterator, Missile missile) {
         for (Tank tank : tanks) {
@@ -278,6 +290,14 @@ public class GameUI extends Pane {
                 break;
             } else if (tank == playerTank && !missile.isPlayerOwner() && tank.getBoundsInParent().intersects(missile.getBoundsInParent())) {
                 tank.takeDamage(missile.getDamage());
+                missileIterator.remove();
+                getChildren().remove(missile);
+                break;
+            }
+        }
+
+        for (javafx.scene.Node child : getChildren()) {
+            if (child instanceof Wall && child.getBoundsInParent().intersects(missile.getBoundsInParent())) {
                 missileIterator.remove();
                 getChildren().remove(missile);
                 break;
