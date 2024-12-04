@@ -44,7 +44,7 @@ public class EnemyAI {
         double newY = enemyTank.getTranslateY() - deltaY;
 
         // Validate and apply movement
-        if (((GameUI) enemyTank.getParent()).isValidMove(enemyTank, newX, newY)) {
+        if (((GameUI) enemyTank.getParent()).isValidMove(enemyTank, newX, newY, false)) {
             enemyTank.setTranslateX(newX);
             enemyTank.setTranslateY(newY);
         }

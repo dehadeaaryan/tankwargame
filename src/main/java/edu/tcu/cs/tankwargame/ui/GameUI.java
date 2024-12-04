@@ -8,6 +8,8 @@ import edu.tcu.cs.tankwargame.utils.Constants;
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.geometry.BoundingBox;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
@@ -116,6 +118,7 @@ public class GameUI extends Pane {
 
     // Method to spawn a MedPack at a valid random position
     private void spawnMedPack() {
+        if (!running) return;
         double x, y;
 
         // Ensure that MedPacks are at least 10 units away from the boundaries
@@ -149,6 +152,7 @@ public class GameUI extends Pane {
     }
 
     private void replaceWithExplosion(Tank tank) {
+        if (!running) return;
         Point2D tankPosition = tank.getPosition();
         Explosion explosion = ExplosionFactory.createExplosion(tankPosition);
         getChildren().add(explosion);
@@ -159,6 +163,7 @@ public class GameUI extends Pane {
     }
 
     private void updateEnemies() {
+        if (!running) return;
         Iterator<Tank> tankIterator = tanks.iterator();
         while (tankIterator.hasNext()) {
             Tank tank = tankIterator.next();
@@ -224,7 +229,8 @@ public class GameUI extends Pane {
         });
     }
 
-    public boolean isValidMove(Tank tank, double newX, double newY) {
+    public boolean isValidMove(Tank tank, double newX, double newY, boolean isPlayerTank) {
+        if (!running) return false;
         // Temporarily move the tank to the new position
         double originalX = tank.getTranslateX();
         double originalY = tank.getTranslateY();
@@ -233,19 +239,36 @@ public class GameUI extends Pane {
 
         boolean valid = true;
 
+        Bounds shrunkBounds = tank.getBoundsInParent();
+        Bounds adjustedBounds = new BoundingBox(
+                shrunkBounds.getMinX() + 10,
+                shrunkBounds.getMinY() + 10,
+                shrunkBounds.getWidth() - 20,
+                shrunkBounds.getHeight() - 20
+        );
+
         // Check collision with other tanks
-        for (Tank otherTank : tanks) {
-            if (otherTank == playerTank && otherTank.getBoundsInParent().intersects(tank.getBoundsInParent())) {
-                valid = false;
-                break;
+        if (!isPlayerTank) {
+            for (Tank otherTank : tanks) {
+                if (otherTank == playerTank) {
+                    // Check intersection with the playerTank's bounds
+                    if (adjustedBounds.intersects(otherTank.getBoundsInParent())) {
+                        valid = false;
+                        break;
+                    }
+                }
             }
         }
 
+
         // Check collision with walls
         for (javafx.scene.Node child : getChildren()) {
-            if (child instanceof Wall && child.getBoundsInParent().intersects(tank.getBoundsInParent())) {
-                valid = false;
-                break;
+            if (child instanceof Wall) {
+                // Check intersection with the wall's bounds
+                if (adjustedBounds.intersects(child.getBoundsInParent())) {
+                    valid = false;
+                    break;
+                }
             }
         }
 
@@ -258,12 +281,14 @@ public class GameUI extends Pane {
 
 
     public void createMissile(Point2D position, double angle, String owner) {
+        if (!running) return;
         Missile missile = MissileFactory.createMissile(position, angle, owner);
         missiles.add(missile);
         getChildren().add(missile);
     }
 
     private void updateMissiles() {
+        if (!running) return;
         Iterator<Missile> missileIterator = missiles.iterator();
         while (missileIterator.hasNext()) {
             Missile missile = missileIterator.next();
@@ -282,13 +307,33 @@ public class GameUI extends Pane {
 
 
     private void handleMissileCollisions(Iterator<Missile> missileIterator, Missile missile) {
+        if (!running) return;
+
+        // Shrink bounds for the missile
+        Bounds missileBounds = missile.getBoundsInParent();
+        Bounds adjustedMissileBounds = new BoundingBox(
+                missileBounds.getMinX() + 5,
+                missileBounds.getMinY() + 5,
+                missileBounds.getWidth() - 10,
+                missileBounds.getHeight() - 10
+        );
+
         for (Tank tank : tanks) {
-            if (tank != playerTank && missile.isPlayerOwner() && tank.getBoundsInParent().intersects(missile.getBoundsInParent())) {
+            // Shrink bounds for the tank
+            Bounds tankBounds = tank.getBoundsInParent();
+            Bounds adjustedTankBounds = new BoundingBox(
+                    tankBounds.getMinX() + 10,
+                    tankBounds.getMinY() + 10,
+                    tankBounds.getWidth() - 20,
+                    tankBounds.getHeight() - 20
+            );
+
+            if (tank != playerTank && missile.isPlayerOwner() && adjustedTankBounds.intersects(adjustedMissileBounds)) {
                 tank.takeDamage(missile.getDamage());
                 missileIterator.remove();
                 getChildren().remove(missile);
                 break;
-            } else if (tank == playerTank && !missile.isPlayerOwner() && tank.getBoundsInParent().intersects(missile.getBoundsInParent())) {
+            } else if (tank == playerTank && !missile.isPlayerOwner() && adjustedTankBounds.intersects(adjustedMissileBounds)) {
                 tank.takeDamage(missile.getDamage());
                 missileIterator.remove();
                 getChildren().remove(missile);
@@ -297,15 +342,28 @@ public class GameUI extends Pane {
         }
 
         for (javafx.scene.Node child : getChildren()) {
-            if (child instanceof Wall && child.getBoundsInParent().intersects(missile.getBoundsInParent())) {
-                missileIterator.remove();
-                getChildren().remove(missile);
-                break;
+            if (child instanceof Wall) {
+                // Shrink bounds for the wall
+                Bounds wallBounds = child.getBoundsInParent();
+                Bounds adjustedWallBounds = new BoundingBox(
+                        wallBounds.getMinX() + 5,
+                        wallBounds.getMinY() + 5,
+                        wallBounds.getWidth() - 10,
+                        wallBounds.getHeight() - 10
+                );
+
+                if (adjustedWallBounds.intersects(adjustedMissileBounds)) {
+                    missileIterator.remove();
+                    getChildren().remove(missile);
+                    break;
+                }
             }
         }
     }
 
+
     private void checkMedPackCollisions() {
+        if (!running) return;
         Iterator<MedPack> medPackIterator = medPacks.iterator();
         while (medPackIterator.hasNext()) {
             MedPack medPack = medPackIterator.next();

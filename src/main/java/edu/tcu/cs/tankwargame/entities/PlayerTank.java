@@ -4,8 +4,6 @@ import edu.tcu.cs.tankwargame.ui.GameUI;
 import edu.tcu.cs.tankwargame.utils.Constants;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 
 public class PlayerTank extends Tank {
     private boolean movingForward = false;
@@ -48,25 +46,37 @@ public class PlayerTank extends Tank {
     }
 
     private void moveForward() {
-        // Move forward based on the current rotation of the tank
-        double angleRadians = Math.toRadians(getRotate() - 90);  // Convert angle to radians
-        double deltaX = Math.cos(angleRadians) * getSpeed();  // X movement based on angle
-        double deltaY = Math.sin(angleRadians) * getSpeed();  // Y movement based on angle
+        // Calculate the new position based on the current rotation
+        double angleRadians = Math.toRadians(getRotate() - 90); // Convert angle to radians
+        double deltaX = Math.cos(angleRadians) * getSpeed(); // X movement based on angle
+        double deltaY = Math.sin(angleRadians) * getSpeed(); // Y movement based on angle
 
-        // Apply the movement to the tank's position
-        setTranslateX(getTranslateX() + deltaX);
-        setTranslateY(getTranslateY() + deltaY);
+        double newX = getTranslateX() + deltaX;
+        double newY = getTranslateY() + deltaY;
+
+        // Check if the new position is valid before applying the move
+        GameUI gameUI = (GameUI) getParent();
+        if (gameUI.isValidMove(this, newX, newY, true)) {
+            setTranslateX(newX);
+            setTranslateY(newY);
+        }
     }
 
     private void moveBackward() {
-        // Move backward based on the current rotation of the tank (opposite direction of forward)
-        double angleRadians = Math.toRadians(getRotate() - 90);  // Convert angle to radians
-        double deltaX = Math.cos(angleRadians) * getSpeed();  // X movement based on angle
-        double deltaY = Math.sin(angleRadians) * getSpeed();  // Y movement based on angle
+        // Calculate the new position based on the current rotation (opposite direction)
+        double angleRadians = Math.toRadians(getRotate() - 90); // Convert angle to radians
+        double deltaX = Math.cos(angleRadians) * getSpeed(); // X movement based on angle
+        double deltaY = Math.sin(angleRadians) * getSpeed(); // Y movement based on angle
 
-        // Apply the movement to the tank's position (opposite direction)
-        setTranslateX(getTranslateX() - deltaX);
-        setTranslateY(getTranslateY() - deltaY);
+        double newX = getTranslateX() - deltaX;
+        double newY = getTranslateY() - deltaY;
+
+        // Check if the new position is valid before applying the move
+        GameUI gameUI = (GameUI) getParent();
+        if (gameUI.isValidMove(this, newX, newY, true)) {
+            setTranslateX(newX);
+            setTranslateY(newY);
+        }
     }
 
     @Override

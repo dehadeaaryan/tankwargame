@@ -47,8 +47,8 @@ public class EnemyTank extends Tank {
         double angleDegrees = getRotate() - 90;
         double angleRadians = Math.toRadians(angleDegrees);
 
-        double missileX = getPosition().getX() + 60 * Math.cos(angleRadians);
-        double missileY = getPosition().getY() + 60 * Math.sin(angleRadians);
+        double missileX = getPosition().getX() + 48 * Math.cos(angleRadians);
+        double missileY = getPosition().getY() + 48 * Math.sin(angleRadians);
 
         // Create the missile at the calculated position
         Point2D missilePosition = new Point2D(missileX, missileY);
